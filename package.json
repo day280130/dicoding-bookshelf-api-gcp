@@ -1,7 +1,7 @@
 {
-  "name": "ts-project-starterpack",
+  "name": "dicoding-bookshelf-api-gcp",
   "version": "0.0.1",
-  "description": "dimas's ts project starterpack",
+  "description": "dimas's new dicoding bookshelf api submission project for the basic backend with gcp, done with typescript",
   "main": "index.ts",
   "type": "module",
   "scripts": {
