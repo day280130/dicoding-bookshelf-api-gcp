@@ -1,4 +1,4 @@
-import { server } from "@src/config/server.js";
+import { server } from "@src/configs/server.js";
 import "dotenv-safe/config.js";
 
 // server.route(routes);
