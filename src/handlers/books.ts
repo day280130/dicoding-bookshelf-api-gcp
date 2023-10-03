@@ -151,9 +151,38 @@ const putBook: reqHandler = (req, h) => {
   });
 };
 
+const deleteBook: reqHandler = (req, h) => {
+  const parsedParams = paramSchema.safeParse(req.params);
+  if (!parsedParams.success)
+    return h
+      .response({
+        status: "fail",
+        message: "Buku gagal dihapus. Id tidak ditemukan",
+        error: parsedParams.error.format().id,
+      })
+      .code(404);
+
+  const bookIndex = books.findIndex(book => book.id === parsedParams.data.id);
+  if (bookIndex < 0)
+    return h
+      .response({
+        status: "fail",
+        message: "Buku gagal dihapus. Id tidak ditemukan",
+      })
+      .code(404);
+
+  books.splice(bookIndex, 1);
+
+  return h.response({
+    status: "success",
+    message: "Buku berhasil dihapus",
+  });
+};
+
 export const bookHandlers = {
   postBook,
   getAllBooks,
   getBookById,
   putBook,
+  deleteBook,
 };

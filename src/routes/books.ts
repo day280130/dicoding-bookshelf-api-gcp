@@ -24,4 +24,9 @@ export const BooksRoutes: ServerRoute<ReqRefDefaults>[] = [
     path: `${path}/{id}`,
     handler: bookHandlers.putBook,
   },
+  {
+    method: "DELETE",
+    path: `${path}/{id}`,
+    handler: bookHandlers.deleteBook,
+  },
 ];
