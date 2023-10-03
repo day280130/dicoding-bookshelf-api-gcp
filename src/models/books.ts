@@ -41,11 +41,13 @@ export const bookSchema = z.object({
       required_error: "readPage required",
     })
     .gte(0, "readPage cannot be negative"),
-  finished: z.coerce.boolean({
-    invalid_type_error: "finished have to be a booleanish value",
+  finished: z.boolean({
+    invalid_type_error: "finished have to be a boolean value",
+    required_error: "finished required",
   }),
-  reading: z.coerce.boolean({
-    invalid_type_error: "reading have to be a booleanish value",
+  reading: z.boolean({
+    invalid_type_error: "reading have to be a boolean value",
+    required_error: "reading required",
   }),
   insertedAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
