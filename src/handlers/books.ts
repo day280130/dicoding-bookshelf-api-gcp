@@ -1,10 +1,23 @@
 import { reqHandler } from "@src/handlers/types.js";
 import { bookSchema, books } from "@src/models/books.js";
 import { randomUUID } from "crypto";
+import { z } from "zod";
 
 const payloadSchema = bookSchema.omit({ id: true, finished: true, insertedAt: true, updatedAt: true });
 
 const paramSchema = bookSchema.pick({ id: true });
+
+const queryParamsSchema = z.object({
+  finished: z
+    .enum(["0", "1"])
+    .transform(finished => finished === "1")
+    .optional(),
+  reading: z
+    .enum(["0", "1"])
+    .transform(finished => finished === "1")
+    .optional(),
+  name: bookSchema.shape.name.transform(name => name.toLowerCase()).optional(),
+});
 
 const postBook: reqHandler = (req, h) => {
   const parsedPayload = payloadSchema.safeParse(req.payload);
@@ -57,11 +70,27 @@ const postBook: reqHandler = (req, h) => {
     .code(201);
 };
 
-const getAllBooks: reqHandler = (_req, h) => {
+const getAllBooks: reqHandler = (req, h) => {
+  const parsedQueries = queryParamsSchema.safeParse(req.query);
+  if (!parsedQueries.success)
+    return h.response({
+      status: "fail",
+      error: parsedQueries.error.format(),
+    });
+
+  let currentBooks = books;
+  const { name: nameQuery, finished: finishedQuery, reading: readingQuery } = parsedQueries.data;
+
+  if (nameQuery) currentBooks = currentBooks.filter(book => book.name.toLowerCase().includes(nameQuery));
+
+  if (finishedQuery !== undefined) currentBooks = currentBooks.filter(book => book.finished === finishedQuery);
+
+  if (readingQuery !== undefined) currentBooks = currentBooks.filter(book => book.reading === readingQuery);
+
   return h.response({
     status: "success",
     data: {
-      books: books.length <= 0 ? [] : books.map(({ id, name, publisher }) => ({ id, name, publisher })),
+      books: currentBooks.length <= 0 ? [] : currentBooks.map(({ id, name, publisher }) => ({ id, name, publisher })),
     },
   });
 };
