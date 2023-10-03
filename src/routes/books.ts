@@ -19,4 +19,9 @@ export const BooksRoutes: ServerRoute<ReqRefDefaults>[] = [
     path: `${path}/{id}`,
     handler: bookHandlers.getBookById,
   },
+  {
+    method: "PUT",
+    path: `${path}/{id}`,
+    handler: bookHandlers.putBook,
+  },
 ];

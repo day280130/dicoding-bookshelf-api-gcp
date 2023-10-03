@@ -2,11 +2,12 @@ import { reqHandler } from "@src/handlers/types.js";
 import { bookSchema, books } from "@src/models/books.js";
 import { randomUUID } from "crypto";
 
-const reqIdParamSchema = bookSchema.pick({ id: true });
+const payloadSchema = bookSchema.omit({ id: true, finished: true, insertedAt: true, updatedAt: true });
 
-const postBookPayloadSchema = bookSchema.omit({ id: true, finished: true, insertedAt: true, updatedAt: true });
+const paramSchema = bookSchema.pick({ id: true });
+
 const postBook: reqHandler = (req, h) => {
-  const parsedPayload = postBookPayloadSchema.safeParse(req.payload);
+  const parsedPayload = payloadSchema.safeParse(req.payload);
 
   if (!parsedPayload.success) {
     const error = parsedPayload.error.format();
@@ -66,7 +67,7 @@ const getAllBooks: reqHandler = (_req, h) => {
 };
 
 const getBookById: reqHandler = (req, h) => {
-  const parsedParams = reqIdParamSchema.safeParse(req.params);
+  const parsedParams = paramSchema.safeParse(req.params);
   if (!parsedParams.success)
     return h
       .response({
@@ -91,8 +92,68 @@ const getBookById: reqHandler = (req, h) => {
   });
 };
 
+const putBook: reqHandler = (req, h) => {
+  const parsedPayload = payloadSchema.safeParse(req.payload);
+
+  if (!parsedPayload.success) {
+    const error = parsedPayload.error.format();
+
+    if (error.name)
+      return h
+        .response({
+          status: "fail",
+          message: "Gagal memperbarui buku. Mohon isi nama buku",
+        })
+        .code(400);
+
+    return h.response({
+      status: "fail",
+      error,
+    });
+  }
+
+  if (parsedPayload.data.readPage > parsedPayload.data.pageCount)
+    return h
+      .response({
+        status: "fail",
+        message: "Gagal memperbarui buku. readPage tidak boleh lebih besar dari pageCount",
+      })
+      .code(400);
+
+  const parsedParams = paramSchema.safeParse(req.params);
+  if (!parsedParams.success)
+    return h
+      .response({
+        status: "fail",
+        message: "Gagal memperbarui buku. Id tidak ditemukan",
+        error: parsedParams.error.format().id,
+      })
+      .code(404);
+
+  const bookIndex = books.findIndex(book => book.id === parsedParams.data.id);
+  if (bookIndex < 0)
+    return h
+      .response({
+        status: "fail",
+        message: "Gagal memperbarui buku. Id tidak ditemukan",
+      })
+      .code(404);
+
+  books[bookIndex] = {
+    ...books[bookIndex],
+    ...parsedPayload.data,
+    updatedAt: new Date().toISOString(),
+  };
+
+  return h.response({
+    status: "success",
+    message: "Buku berhasil diperbarui",
+  });
+};
+
 export const bookHandlers = {
   postBook,
   getAllBooks,
   getBookById,
+  putBook,
 };
