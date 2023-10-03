@@ -9,4 +9,9 @@ export const BooksRoutes: ServerRoute<ReqRefDefaults>[] = [
     path: `${path}`,
     handler: bookHandlers.postBook,
   },
+  {
+    method: "GET",
+    path: `${path}`,
+    handler: bookHandlers.getAllBooks,
+  },
 ];

@@ -54,6 +54,16 @@ const postBook: reqHandler = (req, h) => {
     .code(201);
 };
 
+const getAllBooks: reqHandler = (_req, h) => {
+  return h.response({
+    status: "success",
+    data: {
+      books: books.length <= 0 ? [] : books.map(({ id, name, publisher }) => ({ id, name, publisher })),
+    },
+  });
+};
+
 export const bookHandlers = {
   postBook,
+  getAllBooks,
 };
