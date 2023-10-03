@@ -1,8 +1,8 @@
 {
   "name": "dicoding-bookshelf-api-gcp",
-  "version": "0.0.1",
-  "description": "dimas's new dicoding bookshelf api submission project for the basic backend with gcp, done with typescript",
-  "main": "index.ts",
+  "version": "1.0.0",
+  "description": "dimas's new dicoding bookshelf api submission project for the basic backend with gcp, done in typescript",
+  "main": "./src/index.js",
   "type": "module",
   "scripts": {
     "dev": "npx tsx ./src/index.ts",
