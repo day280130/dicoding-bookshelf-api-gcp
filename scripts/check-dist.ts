@@ -8,4 +8,4 @@ const __dirname = path.dirname(__filename);
 
 const filePath = path.join(__dirname, "..", "dist");
 
-if (!fs.existsSync(filePath)) throw new Error("not built yet. Ignore this error");
+if (!fs.existsSync(filePath)) process.exit(1);
