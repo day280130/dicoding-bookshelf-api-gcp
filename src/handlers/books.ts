@@ -2,6 +2,8 @@ import { reqHandler } from "@src/handlers/types.js";
 import { bookSchema, books } from "@src/models/books.js";
 import { randomUUID } from "crypto";
 
+const reqIdParamSchema = bookSchema.pick({ id: true });
+
 const postBookPayloadSchema = bookSchema.omit({ id: true, finished: true, insertedAt: true, updatedAt: true });
 const postBook: reqHandler = (req, h) => {
   const parsedPayload = postBookPayloadSchema.safeParse(req.payload);
@@ -63,7 +65,34 @@ const getAllBooks: reqHandler = (_req, h) => {
   });
 };
 
+const getBookById: reqHandler = (req, h) => {
+  const parsedParams = reqIdParamSchema.safeParse(req.params);
+  if (!parsedParams.success)
+    return h
+      .response({
+        status: "fail",
+        message: "Buku tidak ditemukan",
+        error: parsedParams.error.format().id,
+      })
+      .code(404);
+
+  const book = books.find(book => book.id === parsedParams.data.id);
+  if (!book)
+    return h
+      .response({
+        status: "fail",
+        message: "Buku tidak ditemukan",
+      })
+      .code(404);
+
+  return h.response({
+    status: "success",
+    data: { book },
+  });
+};
+
 export const bookHandlers = {
   postBook,
   getAllBooks,
+  getBookById,
 };
