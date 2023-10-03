@@ -32,6 +32,7 @@
   },
   "dependencies": {
     "@hapi/hapi": "^21.3.2",
-    "dotenv-safe": "^8.2.0"
+    "dotenv-safe": "^8.2.0",
+    "zod": "^3.22.2"
   }
 }
